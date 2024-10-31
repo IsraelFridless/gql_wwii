@@ -1,6 +1,6 @@
 from graphene import ObjectType, Field, Int, List, Date, String
 
-from app.gql.types.mission_types import MissionType
+from app.gql.types import MissionType
 from app.repository.mission_repository import find_mission_by_id, find_missions_by_date_range, \
     find_missions_by_country_name, find_missions_target_industry, find_missions_by_target_type
 
