@@ -1,6 +1,7 @@
 from typing import List
 
 from returns.maybe import Maybe, Nothing, Some
+from returns.result import Result, Success, Failure
 from sqlalchemy import and_
 
 from app.db.database import session_maker
@@ -59,3 +60,15 @@ def find_missions_by_target_type(target_type: str) -> List[Mission]:
             .filter(TargetType.target_type_name == target_type)
             .all()
         )
+
+
+def insert_mission(mission: Mission) -> Result[Mission, str]:
+    with session_maker() as session:
+        try:
+            session.add(mission)
+            session.commit()
+            session.refresh(mission)
+            return Success(mission)
+        except Exception as e:
+            session.rollback()
+            return Failure(str(e))
