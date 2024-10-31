@@ -5,7 +5,6 @@ from returns.result import Result, Success, Failure
 
 from app.db.database import session_maker
 from app.db.models import Target, Mission
-from app.gql.mutations.mission_mutations import MissionResultInput
 
 
 def find_target_by_mission_id(mission_id) -> Maybe[Target]:
@@ -41,7 +40,7 @@ def insert_target(target: Target) -> Result[Target, str]:
             return Failure(str(e))
 
 
-def update_mission_result(mission_result_input: MissionResultInput) -> Result[Mission, str]:
+def update_mission_result(mission_result_input) -> Result[Mission, str]:
     with session_maker() as session:
         try:
             mission_to_update = session.get(Mission, mission_result_input.mission_id)

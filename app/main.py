@@ -2,7 +2,6 @@ from flask import Flask
 from flask_graphql import GraphQLView
 from graphene import Schema
 
-from app.db.database import init_db
 from app.gql import Query, Mutation
 
 app = Flask(__name__)
@@ -19,5 +18,4 @@ app.add_url_rule(
 )
 
 if __name__ == '__main__':
-    # init_db()
     app.run()

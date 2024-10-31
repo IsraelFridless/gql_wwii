@@ -72,3 +72,15 @@ def insert_mission(mission: Mission) -> Result[Mission, str]:
         except Exception as e:
             session.rollback()
             return Failure(str(e))
+
+
+def delete_mission_by_id(mission_id: int) -> Result[bool, str]:
+    with session_maker() as session:
+        try:
+            mission_to_delete = session.get(Mission, mission_id)
+            session.delete(mission_to_delete)
+            session.commit()
+            return Success(True)
+        except Exception as e:
+            session.rollback()
+            return Failure(str(e))

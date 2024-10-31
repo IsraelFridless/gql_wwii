@@ -3,7 +3,7 @@ from returns.result import Success
 
 from app.db.models import Mission, Target
 from app.gql.types import *
-from app.repository.mission_repository import insert_mission
+from app.repository.mission_repository import insert_mission, delete_mission_by_id
 from app.repository.target_repository import insert_target, update_mission_result
 from app.utils.data_handling import parse_date_string, generate_mission_id
 
@@ -97,7 +97,7 @@ class UpdateMissionResult(Mutation):
     class Arguments:
         mission_result_input = MissionResultInput(required=True)
 
-    mission = Field(MissionType)
+    updated_mission = Field(MissionType)
     message = String()
 
     @staticmethod
@@ -106,7 +106,24 @@ class UpdateMissionResult(Mutation):
         message = 'successfully updated' if isinstance(result, Success) else result.failure()
         updated_mission = result.value_or(None)
 
-        return AddMission(
+        return UpdateMissionResult(
             updated_mission=updated_mission,
+            message=message
+        )
+
+class DeleteMission(Mutation):
+    class Arguments:
+        mission_id = Int()
+
+    success = Boolean()
+    message = String()
+
+    @staticmethod
+    def mutate(root, info, mission_id):
+        result = delete_mission_by_id(mission_id)
+        message = 'successfully deleted' if isinstance(result, Success) else result.failure()
+
+        return DeleteMission(
+            success=result.value_or(False),
             message=message
         )
