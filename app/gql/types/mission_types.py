@@ -1,4 +1,6 @@
 from graphene import ObjectType, Int, String, Date, List, Float, Field
+from returns.maybe import Nothing
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.repository.city_repository import find_cities_by_country_id, find_city_by_id
 from app.repository.country_repository import find_country_by_id
@@ -25,7 +27,9 @@ class CityType(ObjectType):
     @staticmethod
     def resolve_country(root, info):
         maybe_country = find_country_by_id(root.country_id)
-        return maybe_country.value_or(f'country with id: {root.country_id} not found!')
+        if maybe_country is Nothing:
+            raise SQLAlchemyError(f'country with id: {root.country_id} not found')
+        return maybe_country.value_or(None)
 
 
 class MissionType(ObjectType):
@@ -44,7 +48,9 @@ class MissionType(ObjectType):
     @staticmethod
     def resolve_target(root, info):
         maybe_target = find_target_by_mission_id(root.mission_id)
-        return maybe_target.value_or(f'target_with mission_id: {root.mission_id} not found!')
+        if maybe_target is Nothing:
+            raise SQLAlchemyError(f'target with mission_id: {root.mission_id} not found')
+        return maybe_target.value_or(None)
 
 
 class TargetType(ObjectType):
@@ -62,17 +68,23 @@ class TargetType(ObjectType):
     @staticmethod
     def resolve_city(root, info):
         maybe_city = find_city_by_id(root.city_id)
-        return maybe_city.value_or(f'city with id: {root.city_id} not found!')
+        if maybe_city is Nothing:
+            raise SQLAlchemyError(f'city with id: {root.city_id} not found')
+        return maybe_city.value_or(None)
 
     @staticmethod
     def resolve_mission(root, info):
         maybe_mission = find_mission_by_id(root.mission_id)
-        return maybe_mission.value_or(f'mission with id: {root.mission_id} not found!')
+        if maybe_mission is Nothing:
+            raise SQLAlchemyError(f'mission with id: {root.mission_id} not found')
+        return maybe_mission.value_or(None)
 
     @staticmethod
     def resolve_target_type(root, info):
         maybe_target_type = find_target_type_by_id(root.target_type_id)
-        return maybe_target_type.value_or(f'target_type with id: {root.target_type_id} not found!')
+        if maybe_target_type is Nothing:
+            raise SQLAlchemyError(f'target_type with id: {root.target_type_id} not found')
+        return maybe_target_type.value_or(None)
 
 
 class TargetTypeType(ObjectType):

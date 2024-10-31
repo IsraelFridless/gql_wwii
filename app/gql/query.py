@@ -1,4 +1,6 @@
 from graphene import ObjectType, Field, Int, List, Date, String
+from returns.maybe import Nothing
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.gql.types import MissionType
 from app.repository.mission_repository import find_mission_by_id, find_missions_by_date_range, \
@@ -15,7 +17,9 @@ class Query(ObjectType):
     @staticmethod
     def resolve_mission_by_id(root, info, mission_id):
         maybe_mission = find_mission_by_id(mission_id)
-        return maybe_mission.value_or(f'mission with id: {mission_id} not found')
+        if maybe_mission is Nothing:
+            raise SQLAlchemyError(f'mission with id: {mission_id} not found')
+        return maybe_mission.value_or(None)
 
     @staticmethod
     def resolve_missions_by_date_range(root, info, start_date, end_date):

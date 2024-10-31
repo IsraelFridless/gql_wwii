@@ -12,7 +12,6 @@ def find_mission_by_id(mission_id: int) -> Maybe[Mission]:
     with session_maker() as session:
         try:
             mission: Mission = session.get(Mission, mission_id)
-            print(mission)
             if not mission:
                 return Nothing
             return Some(mission)
