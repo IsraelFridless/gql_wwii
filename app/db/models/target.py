@@ -18,6 +18,11 @@ class Target(Base):
         back_populates='target'
     )
 
+    city = relationship(
+        'City',
+        back_populates='targets'
+    )
+
     target_type = relationship(
         'TargetType',
         back_populates='targets',

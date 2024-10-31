@@ -16,3 +16,8 @@ class City(Base):
         'Country',
         back_populates='cities'
     )
+
+    targets = relationship(
+        'Target',
+        back_populates='city'
+    )

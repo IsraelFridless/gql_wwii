@@ -1,9 +1,10 @@
 from graphene import ObjectType, Int, String, Date, List, Float, Field
 
-from app.repository.city_repository import find_cities_by_country_id
+from app.repository.city_repository import find_cities_by_country_id, find_city_by_id
 from app.repository.country_repository import find_country_by_id
 from app.repository.mission_repository import find_mission_by_id
-from app.repository.target_repository import find_target_by_mission_id, find_targets_by_target_type_id
+from app.repository.target_repository import find_target_by_mission_id, find_targets_by_target_type_id, \
+    find_targets_by_city_id
 from app.repository.target_type_repository import find_target_type_by_id
 
 
@@ -15,6 +16,11 @@ class CityType(ObjectType):
     country_id = Int()
 
     country = Field(lambda: CountryType)
+    targets = Field(lambda: TargetType)
+
+    @staticmethod
+    def resolve_targets(root, info):
+        return find_targets_by_city_id(root.city_id)
 
     @staticmethod
     def resolve_country(root, info):
@@ -51,6 +57,12 @@ class TargetType(ObjectType):
 
     mission = Field(lambda: MissionType)
     target_type = Field(lambda: TargetTypeType)
+    city = Field(lambda: CityType)
+
+    @staticmethod
+    def resolve_city(root, info):
+        maybe_city = find_city_by_id(root.city_id)
+        return maybe_city.value_or(f'city with id: {root.city_id} not found!')
 
     @staticmethod
     def resolve_mission(root, info):
